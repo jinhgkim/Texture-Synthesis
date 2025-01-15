@@ -17,11 +17,17 @@ def ComputeSSD(TODOPatch, TODOMask, textureIm, patchL):
         for c in range(ssd_cols):
             # Compute sum square difference between textureIm and TODOPatch
             # for all pixels where TODOMask = 0, and store the result in SSD
-            #
-            # ADD YOUR CODE HERE
-            #
-            pass
-        pass
+
+            # Extract the corresponding patch from textureIm at (r, c)
+            texture_patch = textureIm[r : r + patch_rows, c : c + patch_cols, :]
+
+            # Compute squared differences with floating points
+            squared_diff = (TODOPatch * 1.0 - texture_patch * 1.0) ** 2
+
+            # Mask out empty pixels where TODOMask == 1
+            masked_diff = squared_diff * (1 - TODOMask[:, :, np.newaxis])
+            SSD[r, c] = np.sum(masked_diff)
+
     return SSD
 
 
@@ -41,11 +47,17 @@ def CopyPatch(
             # Copy the selected patch selectPatch into the image containing
             # the hole imHole for each pixel where TODOMask = 1.
             # The patch is centred on iPatchCenter, jPatchCenter in the image imHole
-            #
-            # ADD YOUR CODE HERE
-            #
-            pass
-        pass
+
+            # Calculate its corresponding position
+            hole_i = iPatchCenter - patchL + i
+            hole_j = jPatchCenter - patchL + j
+            texture_i = iMatchCenter - patchL + i
+            texture_j = jMatchCenter - patchL + j
+
+            # Copy the selected patch into the image
+            if TODOMask[i, j] == 1:
+                imHole[hole_i, hole_j, :] = textureIm[texture_i, texture_j, :]
+
     return imHole
 
 
